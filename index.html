@@ -213,6 +213,40 @@
             margin: 20px 0;
         }
 
+        .budget-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .budget-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .budget-option:hover {
+            border-color: #c41e3a;
+            background: #fff5f7;
+        }
+
+        .budget-option.selected {
+            border-color: #c41e3a;
+            background: #c41e3a;
+            color: white;
+        }
+
+        .vote-progress {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -346,6 +380,25 @@
                 <p id="budget-info" style="margin-top: 15px; font-size: 1.1em;"></p>
             </div>
 
+            <!-- Votación de presupuesto -->
+            <div id="budget-voting-section" style="display:none;">
+                <div class="alert alert-info">
+                    <strong>🗳️ Vota por el presupuesto</strong>
+                    <p style="margin-top: 10px;">Elige el monto que prefieres para el intercambio:</p>
+                </div>
+                <div class="budget-options" id="budget-options">
+                    <div class="budget-option" data-amount="15000" onclick="voteBudget(15000)">$15.000</div>
+                    <div class="budget-option" data-amount="25000" onclick="voteBudget(25000)">$25.000</div>
+                    <div class="budget-option" data-amount="35000" onclick="voteBudget(35000)">$35.000</div>
+                    <div class="budget-option" data-amount="45000" onclick="voteBudget(45000)">$45.000</div>
+                    <div class="budget-option" data-amount="55000" onclick="voteBudget(55000)">$55.000</div>
+                    <div class="budget-option" data-amount="65000" onclick="voteBudget(65000)">$65.000</div>
+                    <div class="budget-option" data-amount="75000" onclick="voteBudget(75000)">$75.000</div>
+                    <div class="budget-option" data-amount="100000" onclick="voteBudget(100000)">$100.000</div>
+                </div>
+                <div class="vote-progress" id="vote-progress"></div>
+            </div>
+
             <div class="alert alert-success" id="gift-wish-display" style="display:none;">
                 <strong>💝 Deseo de regalo:</strong>
                 <p id="gift-wish-text" style="margin-top: 10px;"></p>
@@ -375,7 +428,7 @@
         const SUPABASE_URL = 'https://xudkywhoysjrsfbknbqg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZGt5d2hveXNqcnNmYmtuYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODE3NzUsImV4cCI6MjA4MTE1Nzc3NX0.VpECSeJBijrw1y6JopjiRsoHaeDAkdS5KkWQvEQYG1Q';
         
-        // Inicializar cliente de Supabase - CORREGIDO
+        // Inicializar cliente de Supabase
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Estado
@@ -534,7 +587,8 @@
                         organizer_email: organizerEmail,
                         organizer_name: organizerName,
                         budget_mode: budgetMode,
-                        budget_amount: budgetAmount
+                        budget_amount: budgetAmount,
+                        budget_locked: budgetMode === 'fixed'
                     })
                     .select()
                     .single();
@@ -609,10 +663,13 @@
                                     </div>
                                     <p style="font-size: 16px; line-height: 1.6;">Accede al sorteo aquí:</p>
                                     <div style="text-align: center; margin: 30px 0;">
-                                        <a href="${appUrl}" style="display: inline-block; background: #c41e3a; color: white; padding: 20px 60px; text-decoration: none; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4); border: 4px solid #8b1429; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                        <a href="${appUrl}?code=${participant.code}" style="display: inline-block; background: #c41e3a; color: white; padding: 20px 60px; text-decoration: none; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4); border: 4px solid #8b1429; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
                                             🎁 Ver Mi Amigo Secreto
                                         </a>
                                     </div>
+                                    <p style="font-size: 14px; color: #666; margin-top: 30px;">
+                                        O ingresa manualmente el código <strong>${participant.code}</strong> en: <a href="${appUrl}">${appUrl}</a>
+                                    </p>
                                     <p style="font-size: 14px; color: #666; text-align: center; margin-top: 30px;">¡Felices fiestas! 🎄</p>
                                 </div>
                             `
@@ -643,7 +700,18 @@
                 .eq('participant_id', currentUser.secret_friend_id);
 
             document.getElementById('secret-friend-name').textContent = secretFriend.name;
-            document.getElementById('budget-info').textContent = `Presupuesto: $${currentSorteo.budget_amount?.toLocaleString() || 'Por definir'}`;
+
+            // Manejar presupuesto
+            if (currentSorteo.budget_mode === 'voting' && !currentSorteo.budget_locked) {
+                // Mostrar votación
+                document.getElementById('budget-voting-section').style.display = 'block';
+                document.getElementById('budget-info').textContent = 'Vota por el presupuesto abajo';
+                await loadVotingStatus();
+            } else {
+                // Mostrar presupuesto fijo
+                document.getElementById('budget-voting-section').style.display = 'none';
+                document.getElementById('budget-info').textContent = `Presupuesto: $${currentSorteo.budget_amount?.toLocaleString() || 'Por definir'}`;
+            }
 
             if (wishes && wishes.length > 0) {
                 document.getElementById('gift-wish-display').style.display = 'block';
@@ -667,6 +735,108 @@
             }
 
             showSection('section-result');
+        }
+
+        // Votación de presupuesto
+        async function voteBudget(amount) {
+            showLoading(true);
+            
+            try {
+                // Guardar voto
+                await supabaseClient
+                    .from('budget_votes')
+                    .upsert({
+                        sorteo_id: currentSorteo.id,
+                        participant_id: currentUser.id,
+                        amount: amount
+                    });
+
+                // Marcar opción seleccionada
+                document.querySelectorAll('.budget-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector(`[data-amount="${amount}"]`).classList.add('selected');
+
+                // Actualizar estado
+                await loadVotingStatus();
+                
+                showLoading(false);
+                alert('¡Voto registrado! 🗳️');
+            } catch (error) {
+                showLoading(false);
+                console.error(error);
+                alert('Error al votar');
+            }
+        }
+
+        async function loadVotingStatus() {
+            try {
+                // Obtener total de participantes
+                const { data: allParticipants } = await supabaseClient
+                    .from('participants')
+                    .select('id')
+                    .eq('sorteo_id', currentSorteo.id);
+
+                // Obtener votos
+                const { data: votes } = await supabaseClient
+                    .from('budget_votes')
+                    .select('*')
+                    .eq('sorteo_id', currentSorteo.id);
+
+                const totalParticipants = allParticipants.length;
+                const totalVotes = votes.length;
+
+                // Mostrar progreso
+                document.getElementById('vote-progress').innerHTML = `
+                    <strong>Progreso de votación:</strong> ${totalVotes}/${totalParticipants} votos
+                `;
+
+                // Marcar mi voto si existe
+                const myVote = votes.find(v => v.participant_id === currentUser.id);
+                if (myVote) {
+                    document.querySelectorAll('.budget-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    document.querySelector(`[data-amount="${myVote.amount}"]`)?.classList.add('selected');
+                }
+
+                // Si todos votaron, calcular ganador
+                if (totalVotes === totalParticipants) {
+                    const voteCounts = {};
+                    votes.forEach(v => {
+                        voteCounts[v.amount] = (voteCounts[v.amount] || 0) + 1;
+                    });
+
+                    // Encontrar el más votado (en caso de empate, el menor)
+                    let winningAmount = null;
+                    let maxVotes = 0;
+                    Object.entries(voteCounts).forEach(([amount, count]) => {
+                        if (count > maxVotes || (count === maxVotes && parseInt(amount) < winningAmount)) {
+                            winningAmount = parseInt(amount);
+                            maxVotes = count;
+                        }
+                    });
+
+                    // Actualizar sorteo
+                    await supabaseClient
+                        .from('sorteos')
+                        .update({
+                            budget_amount: winningAmount,
+                            budget_locked: true
+                        })
+                        .eq('id', currentSorteo.id);
+
+                    // Actualizar vista
+                    currentSorteo.budget_amount = winningAmount;
+                    currentSorteo.budget_locked = true;
+                    document.getElementById('budget-voting-section').style.display = 'none';
+                    document.getElementById('budget-info').textContent = `Presupuesto: $${winningAmount.toLocaleString()}`;
+                    
+                    alert(`🎉 ¡Votación completa! Presupuesto final: $${winningAmount.toLocaleString()}`);
+                }
+            } catch (error) {
+                console.error('Error loading voting status:', error);
+            }
         }
 
         // Guardar deseo
@@ -712,6 +882,20 @@
         document.getElementById('budget-mode').addEventListener('change', function() {
             document.getElementById('budget-fixed').style.display = 
                 this.value === 'fixed' ? 'block' : 'none';
+        });
+
+        // Auto-acceso por URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                document.getElementById('access-mode').value = 'code';
+                document.getElementById('code-input').value = code;
+                toggleAccessMode();
+                // Auto-acceder después de un momento
+                setTimeout(() => accessByCode(), 500);
+            }
         });
     </script>
 </body>
