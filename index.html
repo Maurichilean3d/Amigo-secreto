@@ -375,9 +375,8 @@
         const SUPABASE_URL = 'https://xudkywhoysjrsfbknbqg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZGt5d2hveXNqcnNmYmtuYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODE3NzUsImV4cCI6MjA4MTE1Nzc3NX0.VpECSeJBijrw1y6JopjiRsoHaeDAkdS5KkWQvEQYG1Q';
         
-        // Inicializar cliente de Supabase
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Inicializar cliente de Supabase - CORREGIDO
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Estado
         let participants = [];
@@ -412,7 +411,7 @@
             showLoading(true);
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('participants')
                     .select('*, sorteos(*)')
                     .eq('email', email)
@@ -446,7 +445,7 @@
             showLoading(true);
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('participants')
                     .select('*, sorteos(*)')
                     .eq('code', code)
@@ -527,7 +526,7 @@
                 const adminCode = generateCode();
 
                 // Crear sorteo
-                const { data: sorteoData, error: sorteoError } = await supabase
+                const { data: sorteoData, error: sorteoError } = await supabaseClient
                     .from('sorteos')
                     .insert({
                         admin_code: adminCode,
@@ -550,7 +549,7 @@
                     code: generateCode()
                 }));
 
-                const { data: createdParticipants, error: participantsError } = await supabase
+                const { data: createdParticipants, error: participantsError } = await supabaseClient
                     .from('participants')
                     .insert(participantsData)
                     .select();
@@ -563,7 +562,7 @@
                 for (let i = 0; i < shuffled.length; i++) {
                     const secretFriendIndex = (i + 1) % shuffled.length;
                     
-                    await supabase
+                    await supabaseClient
                         .from('participants')
                         .update({ secret_friend_id: shuffled[secretFriendIndex].id })
                         .eq('id', shuffled[i].id);
@@ -579,7 +578,7 @@
                 showSection('section-start');
             } catch (error) {
                 showLoading(false);
-                alert('Error al crear sorteo');
+                alert('Error al crear sorteo: ' + error.message);
                 console.error(error);
             }
         }
@@ -596,9 +595,27 @@
                         body: JSON.stringify({
                             to: participant.email,
                             subject: `🎄 Invitación: ${sorteoData.name}`,
-                            html: `<h1>Hola ${participant.name}!</h1>
-                                   <p>Tu código de acceso: <strong>${participant.code}</strong></p>
-                                   <p>Accede en: ${appUrl}</p>`
+                            html: `
+                                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                    <h1 style="color: #c41e3a; text-align: center;">🎅 Amigo Secreto 🎄</h1>
+                                    <h2 style="color: #165b33;">Hola ${participant.name}!</h2>
+                                    <p style="font-size: 16px; line-height: 1.6;">Has sido invitado a participar en:</p>
+                                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                        <h3 style="color: #c41e3a; margin: 0;">${sorteoData.name}</h3>
+                                    </div>
+                                    <p style="font-size: 16px; line-height: 1.6;">Tu código de acceso es:</p>
+                                    <div style="background: #165b33; color: white; padding: 20px; border-radius: 8px; text-align: center; font-size: 24px; letter-spacing: 3px; margin: 20px 0;">
+                                        ${participant.code}
+                                    </div>
+                                    <p style="font-size: 16px; line-height: 1.6;">Accede al sorteo aquí:</p>
+                                    <div style="text-align: center; margin: 30px 0;">
+                                        <a href="${appUrl}" style="display: inline-block; background: #c41e3a; color: white; padding: 20px 60px; text-decoration: none; border-radius: 8px; font-size: 20px; font-weight: bold; box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4); border: 4px solid #8b1429; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                            🎁 Ver Mi Amigo Secreto
+                                        </a>
+                                    </div>
+                                    <p style="font-size: 14px; color: #666; text-align: center; margin-top: 30px;">¡Felices fiestas! 🎄</p>
+                                </div>
+                            `
                         })
                     });
                 } catch (error) {
@@ -614,13 +631,13 @@
                 return;
             }
 
-            const { data: secretFriend } = await supabase
+            const { data: secretFriend } = await supabaseClient
                 .from('participants')
                 .select('*')
                 .eq('id', currentUser.secret_friend_id)
                 .single();
 
-            const { data: wishes } = await supabase
+            const { data: wishes } = await supabaseClient
                 .from('wishes')
                 .select('*')
                 .eq('participant_id', currentUser.secret_friend_id);
@@ -638,7 +655,7 @@
             }
 
             // Cargar mi deseo
-            const { data: myWish } = await supabase
+            const { data: myWish } = await supabaseClient
                 .from('wishes')
                 .select('*')
                 .eq('participant_id', currentUser.id)
@@ -664,7 +681,7 @@
             showLoading(true);
 
             try {
-                await supabase
+                await supabaseClient
                     .from('wishes')
                     .upsert({
                         participant_id: currentUser.id,
