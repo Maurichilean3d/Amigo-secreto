@@ -1,0 +1,30 @@
+🔑 CREDENCIALES DE SUPABASE - CONFIGURADAS
+============================================
+
+✅ YA ESTÁN CONFIGURADAS EN EL CÓDIGO
+
+Las credenciales ya están incluidas directamente en index.html:
+
+SUPABASE_URL=https://xudkywhoysjrsfbknbqg.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZGt5d2hveXNqcnNmYmtuYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODE3NzUsImV4cCI6MjA4MTE1Nzc3NX0.VpECSeJBijrw1y6JopjiRsoHaeDAkdS5KkWQvEQYG1Q
+
+📋 CONFIGURACIÓN EN NETLIFY:
+
+Solo necesitas configurar estas 2 variables:
+
+SENDGRID_API_KEY=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
+FROM_EMAIL=mauricioreyescon@gmail.com
+
+⚠️ IMPORTANTE - PASO PREVIO:
+
+Antes de subir a Netlify, debes ejecutar el script SQL:
+
+1. Ve a: https://supabase.com/dashboard
+2. Abre tu proyecto
+3. SQL Editor > New query
+4. Copia y pega TODO el contenido de: supabase-setup.sql
+5. Click "Run"
+6. Deberías ver: "Success. No rows returned"
+
+✅ Luego ya puedes subir a Netlify y funcionará!
+

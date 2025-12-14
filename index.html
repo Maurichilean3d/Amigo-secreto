@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎅 Amigo Secreto Navideño</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #c41e3a 0%, #165b33 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: "❄️";
+            position: fixed;
+            top: 10%;
+            left: 5%;
+            font-size: 30px;
+            opacity: 0.3;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        body::after {
+            content: "⭐";
+            position: fixed;
+            top: 15%;
+            right: 10%;
+            font-size: 25px;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #c41e3a;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #c41e3a;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b1429 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(196, 30, 58, 0.4);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        .participant-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #c41e3a;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .secret-reveal {
+            background: linear-gradient(135deg, #165b33 0%, #0d3d22 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .secret-name {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .code-display {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            font-size: 1.5em;
+            letter-spacing: 3px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎅 Amigo Secreto 🎄</h1>
+        <p class="subtitle">Organiza tu intercambio de regalos navideños</p>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;">Cargando...</p>
+        </div>
+
+        <!-- Sección: Inicio -->
+        <div id="section-start" class="section active">
+            <div class="input-group">
+                <label>¿Cómo quieres acceder?</label>
+                <select id="access-mode" onchange="toggleAccessMode()">
+                    <option value="email">Con mi email</option>
+                    <option value="code">Con mi código</option>
+                    <option value="create">Crear nuevo sorteo</option>
+                </select>
+            </div>
+
+            <div id="access-email" class="input-group">
+                <label>Email</label>
+                <input type="email" id="email-input" placeholder="tu@email.com">
+                <button onclick="accessByEmail()">
+                    <span>📧</span> Acceder
+                </button>
+            </div>
+
+            <div id="access-code" class="input-group" style="display:none;">
+                <label>Código de Acceso</label>
+                <input type="text" id="code-input" placeholder="ABC123" style="text-transform: uppercase;">
+                <button onclick="accessByCode()">
+                    <span>🔑</span> Acceder
+                </button>
+            </div>
+
+            <div id="access-create" style="display:none;">
+                <button onclick="showSection('section-create')">
+                    <span>➕</span> Crear Nuevo Sorteo
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección: Crear Sorteo -->
+        <div id="section-create" class="section">
+            <h2>Crear Nuevo Sorteo</h2>
+            
+            <div class="input-group">
+                <label>Nombre del Sorteo</label>
+                <input type="text" id="sorteo-name" placeholder="Ej: Amigo Secreto Familia 2025">
+            </div>
+
+            <div class="input-group">
+                <label>Tu Nombre</label>
+                <input type="text" id="organizer-name" placeholder="Tu nombre">
+            </div>
+
+            <div class="input-group">
+                <label>Tu Email</label>
+                <input type="email" id="organizer-email" placeholder="tu@email.com">
+            </div>
+
+            <div class="input-group">
+                <label>Presupuesto</label>
+                <select id="budget-mode">
+                    <option value="fixed">Yo decido el monto</option>
+                    <option value="voting">Votación democrática</option>
+                </select>
+            </div>
+
+            <div id="budget-fixed" class="input-group">
+                <label>Monto del Presupuesto (CLP)</label>
+                <select id="budget-amount">
+                    <option value="15000">$15.000</option>
+                    <option value="25000">$25.000</option>
+                    <option value="35000">$35.000</option>
+                    <option value="45000">$45.000</option>
+                    <option value="55000">$55.000</option>
+                    <option value="65000">$65.000</option>
+                    <option value="75000">$75.000</option>
+                    <option value="100000">$100.000</option>
+                </select>
+            </div>
+
+            <h3 style="margin-top: 30px;">Participantes</h3>
+            <div id="participants-list"></div>
+
+            <div class="input-group">
+                <label>Nombre del Participante</label>
+                <input type="text" id="participant-name" placeholder="Nombre">
+            </div>
+
+            <div class="input-group">
+                <label>Email del Participante</label>
+                <input type="email" id="participant-email" placeholder="email@ejemplo.com">
+            </div>
+
+            <button onclick="addParticipant()" class="secondary">
+                <span>➕</span> Agregar Participante
+            </button>
+
+            <button onclick="createSorteo()" style="margin-top: 20px;">
+                <span>🎁</span> Crear Sorteo y Enviar Invitaciones
+            </button>
+
+            <button onclick="showSection('section-start')" class="secondary">
+                Cancelar
+            </button>
+        </div>
+
+        <!-- Sección: Resultado -->
+        <div id="section-result" class="section">
+            <div class="secret-reveal">
+                <h2>🎉 Tu Amigo Secreto es:</h2>
+                <div class="secret-name" id="secret-friend-name"></div>
+                <p id="budget-info" style="margin-top: 15px; font-size: 1.1em;"></p>
+            </div>
+
+            <div class="alert alert-success" id="gift-wish-display" style="display:none;">
+                <strong>💝 Deseo de regalo:</strong>
+                <p id="gift-wish-text" style="margin-top: 10px;"></p>
+            </div>
+
+            <div class="alert alert-warning" id="no-gift-wish" style="display:none;">
+                <strong>⏳</strong> Tu amigo secreto aún no ha registrado su deseo de regalo.
+            </div>
+
+            <div class="input-group" style="margin-top: 30px;">
+                <label>¿Qué regalo deseas recibir?</label>
+                <textarea id="my-gift-wish" placeholder="Describe el regalo que te gustaría recibir..."></textarea>
+            </div>
+
+            <button onclick="saveGiftWish()">
+                <span>💾</span> Guardar Mi Deseo
+            </button>
+
+            <button onclick="showSection('section-start')" class="secondary">
+                Salir
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://xudkywhoysjrsfbknbqg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZGt5d2hveXNqcnNmYmtuYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODE3NzUsImV4cCI6MjA4MTE1Nzc3NX0.VpECSeJBijrw1y6JopjiRsoHaeDAkdS5KkWQvEQYG1Q';
+        
+        // Inicializar cliente de Supabase
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Estado
+        let participants = [];
+        let currentUser = null;
+        let currentSorteo = null;
+
+        // Navegación
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('active', show);
+        }
+
+        function toggleAccessMode() {
+            const mode = document.getElementById('access-mode').value;
+            document.getElementById('access-email').style.display = mode === 'email' ? 'block' : 'none';
+            document.getElementById('access-code').style.display = mode === 'code' ? 'block' : 'none';
+            document.getElementById('access-create').style.display = mode === 'create' ? 'block' : 'none';
+        }
+
+        // Acceso por email
+        async function accessByEmail() {
+            const email = document.getElementById('email-input').value.trim();
+            if (!email) {
+                alert('Por favor ingresa tu email');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const { data, error } = await supabase
+                    .from('participants')
+                    .select('*, sorteos(*)')
+                    .eq('email', email)
+                    .single();
+
+                if (error || !data) {
+                    showLoading(false);
+                    alert('No se encontró ningún sorteo con este email');
+                    return;
+                }
+
+                currentUser = data;
+                currentSorteo = data.sorteos;
+                await loadResults();
+                showLoading(false);
+            } catch (error) {
+                showLoading(false);
+                alert('Error al acceder. Verifica tu email.');
+                console.error(error);
+            }
+        }
+
+        // Acceso por código
+        async function accessByCode() {
+            const code = document.getElementById('code-input').value.trim().toUpperCase();
+            if (!code) {
+                alert('Por favor ingresa tu código');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const { data, error } = await supabase
+                    .from('participants')
+                    .select('*, sorteos(*)')
+                    .eq('code', code)
+                    .single();
+
+                if (error || !data) {
+                    showLoading(false);
+                    alert('Código no válido');
+                    return;
+                }
+
+                currentUser = data;
+                currentSorteo = data.sorteos;
+                await loadResults();
+                showLoading(false);
+            } catch (error) {
+                showLoading(false);
+                alert('Error al acceder. Verifica tu código.');
+                console.error(error);
+            }
+        }
+
+        // Agregar participante
+        function addParticipant() {
+            const name = document.getElementById('participant-name').value.trim();
+            const email = document.getElementById('participant-email').value.trim();
+
+            if (!name || !email) {
+                alert('Por favor completa nombre y email');
+                return;
+            }
+
+            participants.push({ name, email });
+            
+            document.getElementById('participant-name').value = '';
+            document.getElementById('participant-email').value = '';
+            
+            renderParticipants();
+        }
+
+        function renderParticipants() {
+            const container = document.getElementById('participants-list');
+            container.innerHTML = participants.map((p, i) => `
+                <div class="participant-item">
+                    <span>${p.name} (${p.email})</span>
+                    <button onclick="removeParticipant(${i})" style="width: auto; padding: 8px 16px; margin: 0;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function removeParticipant(index) {
+            participants.splice(index, 1);
+            renderParticipants();
+        }
+
+        // Crear sorteo
+        async function createSorteo() {
+            const name = document.getElementById('sorteo-name').value.trim();
+            const organizerName = document.getElementById('organizer-name').value.trim();
+            const organizerEmail = document.getElementById('organizer-email').value.trim();
+            const budgetMode = document.getElementById('budget-mode').value;
+            const budgetAmount = budgetMode === 'fixed' ? parseInt(document.getElementById('budget-amount').value) : null;
+
+            if (!name || !organizerName || !organizerEmail) {
+                alert('Por favor completa todos los campos del organizador');
+                return;
+            }
+
+            if (participants.length < 3) {
+                alert('Necesitas al menos 3 participantes');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                // Generar código admin
+                const adminCode = generateCode();
+
+                // Crear sorteo
+                const { data: sorteoData, error: sorteoError } = await supabase
+                    .from('sorteos')
+                    .insert({
+                        admin_code: adminCode,
+                        name: name,
+                        organizer_email: organizerEmail,
+                        organizer_name: organizerName,
+                        budget_mode: budgetMode,
+                        budget_amount: budgetAmount
+                    })
+                    .select()
+                    .single();
+
+                if (sorteoError) throw sorteoError;
+
+                // Crear participantes
+                const participantsData = participants.map(p => ({
+                    sorteo_id: sorteoData.id,
+                    name: p.name,
+                    email: p.email,
+                    code: generateCode()
+                }));
+
+                const { data: createdParticipants, error: participantsError } = await supabase
+                    .from('participants')
+                    .insert(participantsData)
+                    .select();
+
+                if (participantsError) throw participantsError;
+
+                // Realizar sorteo (asignar amigos secretos)
+                const shuffled = [...createdParticipants].sort(() => Math.random() - 0.5);
+                
+                for (let i = 0; i < shuffled.length; i++) {
+                    const secretFriendIndex = (i + 1) % shuffled.length;
+                    
+                    await supabase
+                        .from('participants')
+                        .update({ secret_friend_id: shuffled[secretFriendIndex].id })
+                        .eq('id', shuffled[i].id);
+                }
+
+                // Enviar emails
+                await sendEmails(sorteoData, createdParticipants);
+
+                showLoading(false);
+                alert(`¡Sorteo creado!\n\nTu código de admin: ${adminCode}\n\nSe han enviado emails a todos los participantes.`);
+                
+                participants = [];
+                showSection('section-start');
+            } catch (error) {
+                showLoading(false);
+                alert('Error al crear sorteo');
+                console.error(error);
+            }
+        }
+
+        // Enviar emails
+        async function sendEmails(sorteoData, participants) {
+            const appUrl = window.location.origin;
+            
+            for (const participant of participants) {
+                try {
+                    await fetch('/.netlify/functions/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: participant.email,
+                            subject: `🎄 Invitación: ${sorteoData.name}`,
+                            html: `<h1>Hola ${participant.name}!</h1>
+                                   <p>Tu código de acceso: <strong>${participant.code}</strong></p>
+                                   <p>Accede en: ${appUrl}</p>`
+                        })
+                    });
+                } catch (error) {
+                    console.error('Error sending email:', error);
+                }
+            }
+        }
+
+        // Cargar resultados
+        async function loadResults() {
+            if (!currentUser.secret_friend_id) {
+                alert('Aún no se ha realizado el sorteo');
+                return;
+            }
+
+            const { data: secretFriend } = await supabase
+                .from('participants')
+                .select('*')
+                .eq('id', currentUser.secret_friend_id)
+                .single();
+
+            const { data: wishes } = await supabase
+                .from('wishes')
+                .select('*')
+                .eq('participant_id', currentUser.secret_friend_id);
+
+            document.getElementById('secret-friend-name').textContent = secretFriend.name;
+            document.getElementById('budget-info').textContent = `Presupuesto: $${currentSorteo.budget_amount?.toLocaleString() || 'Por definir'}`;
+
+            if (wishes && wishes.length > 0) {
+                document.getElementById('gift-wish-display').style.display = 'block';
+                document.getElementById('no-gift-wish').style.display = 'none';
+                document.getElementById('gift-wish-text').textContent = wishes[0].description || 'Sin descripción';
+            } else {
+                document.getElementById('gift-wish-display').style.display = 'none';
+                document.getElementById('no-gift-wish').style.display = 'block';
+            }
+
+            // Cargar mi deseo
+            const { data: myWish } = await supabase
+                .from('wishes')
+                .select('*')
+                .eq('participant_id', currentUser.id)
+                .eq('priority', 'high')
+                .single();
+
+            if (myWish) {
+                document.getElementById('my-gift-wish').value = myWish.description || '';
+            }
+
+            showSection('section-result');
+        }
+
+        // Guardar deseo
+        async function saveGiftWish() {
+            const wish = document.getElementById('my-gift-wish').value.trim();
+            
+            if (!wish) {
+                alert('Por favor describe tu regalo');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                await supabase
+                    .from('wishes')
+                    .upsert({
+                        participant_id: currentUser.id,
+                        priority: 'high',
+                        description: wish
+                    });
+
+                showLoading(false);
+                alert('¡Deseo guardado exitosamente! 🎁');
+            } catch (error) {
+                showLoading(false);
+                alert('Error al guardar');
+                console.error(error);
+            }
+        }
+
+        // Generar código
+        function generateCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        // Toggle budget mode
+        document.getElementById('budget-mode').addEventListener('change', function() {
+            document.getElementById('budget-fixed').style.display = 
+                this.value === 'fixed' ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>

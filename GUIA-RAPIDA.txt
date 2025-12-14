@@ -1,0 +1,102 @@
+🚀 GUÍA RÁPIDA - CONFIGURACIÓN SUPABASE
+========================================
+
+📋 PASO 1: EJECUTAR SQL EN SUPABASE (5 min)
+--------------------------------------------
+
+1. Ve a: https://supabase.com/dashboard
+2. Selecciona tu proyecto
+3. Click en "SQL Editor" (menú izquierdo)
+4. Click en "+ New query"
+5. Copia TODO el archivo: supabase-setup.sql
+6. Pega en el editor
+7. Click "Run" (abajo derecha)
+8. Deberías ver: "Success. No rows returned"
+
+✅ Tu base de datos está creada!
+
+📋 PASO 2: COPIAR CREDENCIALES CORRECTAS (2 min)
+-------------------------------------------------
+
+1. En Supabase, ve a: Settings > API
+2. Copia estos valores:
+
+   📌 Project URL:
+   https://[tu-proyecto].supabase.co
+   
+   📌 anon public (bajo "Project API keys"):
+   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   (un texto MUY largo)
+
+3. GUÁRDALOS para el siguiente paso
+
+📋 PASO 3: SUBIR A NETLIFY (3 min)
+-----------------------------------
+
+1. Ve a: https://app.netlify.com
+2. Arrastra el ZIP a "Sites"
+3. Espera que se despliegue
+
+📋 PASO 4: CONFIGURAR VARIABLES EN NETLIFY (3 min)
+---------------------------------------------------
+
+1. En Netlify, ve a: Site settings > Environment variables
+2. Agrega estas 4 variables (Click "Add a variable"):
+
+   Name: SUPABASE_URL
+   Value: [pega tu Project URL]
+   
+   Name: SUPABASE_ANON_KEY  
+   Value: [pega tu anon public key]
+   
+   Name: SENDGRID_API_KEY
+   Value: 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
+   
+   Name: FROM_EMAIL
+   Value: mauricioreyescon@gmail.com
+
+3. Click "Save"
+4. Ve a: Deploys > Trigger deploy
+
+📋 PASO 5: ¡PROBAR! (2 min)
+----------------------------
+
+1. Abre tu sitio: https://[tu-sitio].netlify.app
+2. Crea un sorteo de prueba
+3. Agrega 2-3 participantes (con emails reales)
+4. Los emails deberían llegar
+5. ¡Cada persona puede acceder con su código!
+
+✅ ¡FUNCIONA! Ahora TODOS pueden acceder desde cualquier dispositivo
+
+🔍 VERIFICAR QUE FUNCIONA:
+
+✅ Los emails llegan a todos
+✅ Cada persona puede acceder con su código
+✅ Los datos se guardan en Supabase (no se pierden)
+✅ Funciona desde diferentes dispositivos/navegadores
+
+❌ Si algo falla:
+
+1. Problema: "Error al conectar"
+   Solución: Verifica SUPABASE_URL y SUPABASE_ANON_KEY
+
+2. Problema: "No llegan emails"
+   Solución: Verifica SENDGRID_API_KEY y FROM_EMAIL
+
+3. Problema: "Código no funciona"
+   Solución: Verifica que se ejecutó supabase-setup.sql
+
+🎁 DIFERENCIAS CON VERSIÓN ANTERIOR:
+
+ANTES (localStorage):
+❌ Solo organizador podía acceder
+❌ Datos en navegador (se pierden si borras caché)
+❌ No funciona en otros dispositivos
+
+AHORA (Supabase):
+✅ TODOS pueden acceder
+✅ Datos en servidor (persistentes)
+✅ Funciona desde cualquier dispositivo
+
+🎄 ¡Listo para tu sorteo navideño!

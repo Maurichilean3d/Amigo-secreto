@@ -1,0 +1,158 @@
+{
+  "quiz": {
+    "question1": {
+      "text": "¿Qué te interesa más?",
+      "options": {
+        "tech": {
+          "label": "🖥️ Tecnología",
+          "emoji": "💻",
+          "next": "tech"
+        },
+        "fashion": {
+          "label": "👗 Ropa y Moda",
+          "emoji": "👔",
+          "next": "fashion"
+        },
+        "home": {
+          "label": "🏠 Hogar y Decoración",
+          "emoji": "🛋️",
+          "next": "home"
+        },
+        "sports": {
+          "label": "⚽ Deportes y Fitness",
+          "emoji": "🏃",
+          "next": "sports"
+        },
+        "culture": {
+          "label": "📚 Libros y Cultura",
+          "emoji": "🎭",
+          "next": "culture"
+        },
+        "experiences": {
+          "label": "✈️ Experiencias",
+          "emoji": "🎢",
+          "next": "experiences"
+        },
+        "food": {
+          "label": "🍕 Comida y Bebida",
+          "emoji": "🍷",
+          "next": "food"
+        }
+      }
+    },
+    "question2": {
+      "tech": {
+        "text": "¿Qué tipo de tecnología?",
+        "options": {
+          "audio": {"label": "🎧 Audio", "next": "tech_audio"},
+          "pc": {"label": "⌨️ Accesorios PC", "next": "tech_pc"},
+          "smart": {"label": "🏠 Smart Home", "next": "tech_smart"},
+          "gaming": {"label": "🎮 Gaming", "next": "tech_gaming"},
+          "photo": {"label": "📷 Fotografía", "next": "tech_photo"},
+          "wearable": {"label": "⌚ Wearables", "next": "tech_wearable"}
+        }
+      },
+      "fashion": {
+        "text": "¿Qué estilo prefieres?",
+        "options": {
+          "casual": {"label": "👕 Casual", "next": "fashion_casual"},
+          "formal": {"label": "👔 Formal", "next": "fashion_formal"},
+          "sports_wear": {"label": "🏃 Deportivo", "next": "fashion_sports"},
+          "accessories": {"label": "⌚ Accesorios", "next": "fashion_acc"}
+        }
+      },
+      "home": {
+        "text": "¿Qué tipo de artículo?",
+        "options": {
+          "deco": {"label": "🖼️ Decoración", "next": "home_deco"},
+          "kitchen": {"label": "🍳 Cocina", "next": "home_kitchen"},
+          "bed": {"label": "🛏️ Dormitorio", "next": "home_bed"},
+          "garden": {"label": "🌱 Jardín", "next": "home_garden"}
+        }
+      },
+      "sports": {
+        "text": "¿Qué tipo de deporte?",
+        "options": {
+          "gym": {"label": "🏋️ Gym/Fitness", "next": "sports_gym"},
+          "outdoor": {"label": "🏃 Outdoor", "next": "sports_outdoor"},
+          "yoga": {"label": "🧘 Yoga/Pilates", "next": "sports_yoga"},
+          "bike": {"label": "🚴 Ciclismo", "next": "sports_bike"}
+        }
+      },
+      "culture": {
+        "text": "¿Qué prefieres?",
+        "options": {
+          "books": {"label": "📚 Libros", "next": "culture_books"},
+          "art": {"label": "🎨 Arte", "next": "culture_art"},
+          "music": {"label": "🎵 Música", "next": "culture_music"},
+          "movies": {"label": "🎬 Cine", "next": "culture_movies"}
+        }
+      },
+      "experiences": {
+        "text": "¿Qué tipo de experiencia?",
+        "options": {
+          "travel": {"label": "✈️ Viajes", "next": "exp_travel"},
+          "spa": {"label": "💆 Spa/Relax", "next": "exp_spa"},
+          "food_exp": {"label": "🍽️ Gastronómica", "next": "exp_food"},
+          "adventure": {"label": "🎢 Aventura", "next": "exp_adventure"}
+        }
+      },
+      "food": {
+        "text": "¿Qué prefieres?",
+        "options": {
+          "gourmet": {"label": "🍷 Gourmet", "next": "food_gourmet"},
+          "sweets": {"label": "🍫 Dulces", "next": "food_sweets"},
+          "coffee": {"label": "☕ Café/Té", "next": "food_coffee"},
+          "snacks": {"label": "🍿 Snacks", "next": "food_snacks"}
+        }
+      }
+    },
+    "question3": {
+      "tech_audio": {
+        "text": "¿Qué prefieres?",
+        "options": ["Audífonos Bluetooth", "Parlantes Portátiles", "Audífonos Gaming", "Soundbar"]
+      },
+      "tech_pc": {
+        "text": "¿Qué necesitas?",
+        "options": ["Teclado Mecánico", "Mouse Gaming", "Webcam HD", "Micrófono USB"]
+      },
+      "tech_smart": {
+        "text": "¿Qué dispositivo?",
+        "options": ["Luces Inteligentes", "Enchufe Smart", "Cámara Seguridad", "Asistente de Voz"]
+      },
+      "fashion_casual": {
+        "text": "¿Qué prenda?",
+        "options": ["Polera Premium", "Jeans", "Zapatillas Casual", "Sudadera con Capucha"]
+      },
+      "home_kitchen": {
+        "text": "¿Qué necesitas?",
+        "options": ["Juego de Cuchillos", "Procesador de Alimentos", "Cafetera", "Set de Ollas"]
+      },
+      "food_sweets": {
+        "text": "¿Qué prefieres?",
+        "options": ["Chocolates Premium", "Dulces Gourmet", "Bombones", "Galletas Artesanales"]
+      }
+    }
+  },
+  "suggestions": {
+    "Audífonos Bluetooth": {
+      "description": "Audífonos Bluetooth con cancelación de ruido activa",
+      "links": [
+        "https://www.sony.cl/electronics/audifonos/wh-1000xm5",
+        "https://www.bose.com/es_cl/products/headphones/noise_cancelling_headphones/quietcomfort-45.html"
+      ]
+    },
+    "Teclado Mecánico": {
+      "description": "Teclado mecánico RGB para gaming o trabajo",
+      "links": [
+        "https://www.logitechg.com/es-roam/products/gaming-keyboards.html"
+      ]
+    },
+    "Chocolates Premium": {
+      "description": "Caja de chocolates premium gourmet",
+      "links": [
+        "https://www.ferrero.com/es/es"
+      ]
+    }
+  }
+}

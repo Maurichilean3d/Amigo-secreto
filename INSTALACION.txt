@@ -1,0 +1,80 @@
+🎄 INSTALACIÓN RÁPIDA - 3 PASOS
+================================
+
+✅ Las credenciales de Supabase YA ESTÁN configuradas en el código
+
+📋 PASO 1: CREAR BASE DE DATOS (5 minutos)
+-------------------------------------------
+
+1. Ve a: https://supabase.com/dashboard
+2. Abre tu proyecto: xudkywhoysjrsfbknbqg
+3. Click en "SQL Editor" (menú izquierdo)
+4. Click en "+ New query"
+5. Abre el archivo: supabase-setup.sql
+6. Copia TODO el contenido
+7. Pega en el editor de Supabase
+8. Click "Run" (botón verde abajo)
+9. Deberías ver: "Success. No rows returned"
+
+✅ Base de datos creada!
+
+📋 PASO 2: SUBIR A NETLIFY (2 minutos)
+---------------------------------------
+
+1. Descomprime el ZIP
+2. Ve a: https://app.netlify.com/drop
+3. Arrastra la CARPETA completa (no el ZIP)
+4. Espera que se despliegue (1-2 minutos)
+
+📋 PASO 3: CONFIGURAR VARIABLES (2 minutos)
+--------------------------------------------
+
+1. En Netlify, ve a: Site settings > Environment variables
+2. Click "Add a variable"
+3. Agrega estas 2:
+
+   Name: SENDGRID_API_KEY
+   Value: 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
+
+   Name: FROM_EMAIL
+   Value: mauricioreyescon@gmail.com
+
+4. Click "Save"
+5. Ve a: Deploys > Trigger deploy
+
+🎉 ¡LISTO! Tu app está funcionando
+
+📱 PRUEBA:
+
+1. Abre tu sitio: https://[tu-sitio].netlify.app
+2. Click "Crear nuevo sorteo"
+3. Completa los datos
+4. Agrega 2-3 participantes
+5. Click "Crear Sorteo"
+6. ✅ Los emails deberían llegar
+7. ✅ Cada persona puede acceder con su código
+
+🔍 DIFERENCIAS CON VERSIÓN ANTERIOR:
+
+ANTES (localStorage):
+❌ Solo el organizador podía acceder
+❌ Datos se perdían al borrar caché
+❌ No funcionaba en otros dispositivos
+
+AHORA (Supabase):
+✅ TODOS pueden acceder desde cualquier lugar
+✅ Los datos se guardan en servidor
+✅ Funciona desde cualquier dispositivo/navegador
+
+💡 FUNCIONALIDADES:
+
+✅ Crear sorteo con nombre
+✅ Sistema de presupuesto (fijo o votación)
+✅ Envío automático de emails
+✅ Acceso por email o código
+✅ Ver quién es tu amigo secreto
+✅ Registrar deseo de regalo
+✅ Ver deseo de tu amigo secreto
+✅ Todo en tiempo real
+
+🎁 ¡Disfruta tu amigo secreto!

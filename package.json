@@ -1,0 +1,9 @@
+{
+  "name": "amigo-secreto-supabase",
+  "version": "2.0.0",
+  "description": "Amigo Secreto con Supabase - Todos pueden acceder",
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}
