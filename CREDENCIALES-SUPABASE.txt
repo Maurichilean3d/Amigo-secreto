@@ -1,30 +1,22 @@
-🔑 CREDENCIALES DE SUPABASE - CONFIGURADAS
-============================================
+🔐 CREDENCIALES DE SUPABASE - REDACTADAS POR SEGURIDAD
+=========================================================
 
-✅ YA ESTÁN CONFIGURADAS EN EL CÓDIGO
+⚠️ Este archivo contenía credenciales reales (URL de Supabase, ANON KEY, SendGrid API KEY y un correo) expuestas en texto plano en un repositorio público. Han sido eliminadas de este archivo.
 
-Las credenciales ya están incluidas directamente en index.html:
+SUPABASE_URL=[ROTATED - ver gestor de secretos]
+SUPABASE_ANON_KEY=[ROTATED - ver gestor de secretos]
 
-SUPABASE_URL=https://xudkywhoysjrsfbknbqg.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZGt5d2hveXNqcnNmYmtuYnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1ODE3NzUsImV4cCI6MjA4MTE1Nzc3NX0.VpECSeJBijrw1y6JopjiRsoHaeDAkdS5KkWQvEQYG1Q
+CONFIGURACIÓN EN NETLIFY (variables de entorno, NO en este archivo):
 
-📋 CONFIGURACIÓN EN NETLIFY:
+SENDGRID_API_KEY=[ROTATED - configurar como variable de entorno en Netlify]
+FROM_EMAIL=[configurar como variable de entorno en Netlify]
 
-Solo necesitas configurar estas 2 variables:
+⚠️ IMPORTANTE:
+Rota/revoca estas claves reales en los paneles de Supabase y SendGrid lo antes posible, ya que estuvieron expuestas públicamente. Configura las variables sensibles como variables de entorno en Netlify (Site settings > Environment variables), nunca en un archivo de texto dentro del repositorio.
 
-SENDGRID_API_KEY=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
-FROM_EMAIL=mauricioreyescon@gmail.com
-
-⚠️ IMPORTANTE - PASO PREVIO:
-
-Antes de subir a Netlify, debes ejecutar el script SQL:
-
+Para el script SQL:
 1. Ve a: https://supabase.com/dashboard
 2. Abre tu proyecto
 3. SQL Editor > New query
-4. Copia y pega TODO el contenido de: supabase-setup.sql
+4. Copia y pega el contenido de: supabase-setup.sql
 5. Click "Run"
-6. Deberías ver: "Success. No rows returned"
-
-✅ Luego ya puedes subir a Netlify y funcionará!
-
